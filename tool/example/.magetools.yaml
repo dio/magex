@@ -1,0 +1,110 @@
+tools:
+  - name: gosimports
+    type: go:binary
+    version: v0.3.5
+    source: 'github.com/rinchsan/gosimports/cmd/gosimports'
+  - name: protoc-gen-es
+    type: npm:binary
+    version: v1.3.0
+    source: '@bufbuild/protoc-gen-es'
+    option:
+      # "runtime" selects a tool inside tools to be installed first. Since *this* tools needs the specified runtime to be executed.
+      # As an alternative, in the code, one can use tools.RunWith(RuntimeWithOption{deps: ["node"]}) too.
+      runtime: node
+  - name: protoc-gen-connect-query
+    type: npm:binary
+    version: v0.4.2
+    source: '@connectrpc/protoc-gen-connect-query'
+    option:
+      runtime: node
+  - name: prettier
+    type: npm:binary
+    version: v3.0.3
+    source: 'prettier'
+    option:
+      runtime: node
+  - name: serve
+    type: npm:binary
+    version: v14.2.1
+    source: 'serve'
+    option:
+      runtime: node
+  - name: kind
+    type: go:binary
+    version: v0.20.0
+    source: 'sigs.k8s.io/kind'
+  - name: kubectl
+    type: http:binary
+    version: v1.28.1
+    source: 'https://dl.k8s.io/release/{{ .Version }}/bin/{{ .OS }}/{{ .Arch }}/kubectl'
+    option:
+      shas:
+        darwin-arm64: sha256:8fe9f753383574863959335d8b830908e67a40c3f51960af63892d969bfc1b10
+        darwin-amd64: sha256:d6b8f2bac5f828478eade0acf15fb7dde02d7613fc9e644dc019a7520d822a1a
+        linux-arm64: sha256:46954a604b784a8b0dc16754cfc3fa26aabca9fd4ffd109cd028bfba99d492f6
+        linux-amd64: sha256:e7a7d6f9d06fab38b4128785aa80f65c54f6675a0d2abef655259ddd852274e1
+  - name: protoc-gen-go
+    type: go:binary
+    version: v1.31.0
+    source: 'google.golang.org/protobuf/cmd/protoc-gen-go'
+  - name: protoc-gen-connect-go
+    type: go:binary
+    version: v1.11.0
+    source: 'connectrpc.com/connect/cmd/protoc-gen-connect-go'
+  - name: buf
+    type: go:binary
+    version: v1.26.1
+    source: 'github.com/bufbuild/buf/cmd/buf'
+  - name: golangci-lint
+    version: v1.54.2
+    type: http:archive
+    source: https://github.com/golangci/golangci-lint/releases/download/{{ .Version }}/golangci-lint-{{ trimV .Version }}-{{ .OS }}-{{ .Arch }}.tar.gz
+    option:
+      stripPrefix: 'golangci-lint-{{ trimV .Version }}-{{ .OS }}-{{ .Arch }}'
+      shas:
+        darwin-arm64: sha256:7b33fb1be2f26b7e3d1f3c10ce9b2b5ce6d13bb1d8468a4b2ba794f05b4445e1
+        darwin-amd64: sha256:925c4097eae9e035b0b052a66d0a149f861e2ab611a4e677c7ffd2d4e05b9b89
+        linux-arm64: sha256:a9f14b33473c65fcfbf411ec054b53a87dbb849f4e09ee438f1ee76dbf3f3d4e
+        linux-amd64: sha256:17c9ca05253efe833d47f38caf670aad2202b5e6515879a99873fabd4c7452b3
+  - name: helm
+    version: v3.12.3
+    type: http:archive
+    source: https://get.helm.sh/helm-{{ .Version }}-{{ .OS }}-{{ .Arch }}{{ .Ext }}
+    option:
+      stripPrefix: '{{ .OS }}-{{ .Arch }}'
+      shas:
+        darwin-arm64: sha256:240b0a7da9cae208000eff3d3fb95e0fa1f4903d95be62c3f276f7630b12dae1
+        darwin-amd64: sha256:1bdbbeec5a12dd0c1cd4efd8948a156d33e1e2f51140e2a51e1e5e7b11b81d47
+        linux-arm64: sha256:79ef06935fb47e432c0c91bdefd140e5b543ec46376007ca14a52e5ed3023088
+        linux-amd64: sha256:1b2313cd198d45eab00cc37c38f6b1ca0a948ba279c29e322bdf426d406129b5
+  - name: ko
+    version: v0.14.1
+    type: http:archive
+    source: https://github.com/ko-build/ko/releases/download/{{ .Version }}/ko_{{ trimV .Version }}_{{ .OS }}_{{ .Arch }}.tar.gz
+    option:
+      stripPrefix: '{{ .OS }}-{{ .Arch }}'
+      shas:
+        darwin-arm64: sha256:8d41c228da3e04e3de293f0f5bfe1775a4c74582ba21c86ad32244967095189f
+        darwin-amd64: sha256:b879ea58255c9f2be2d4d6c4f6bd18209c78e9e0b890dbce621954ee0d63c4e5
+        linux-arm64: sha256:9a355b8a9fe88e9d65d3aa1116d943746e3cea86944f4566e47886fd260dd3e9
+        linux-amd64: sha256:3f8f8e3fb4b78a4dfc0708df2b58f202c595a66c34195786f9a279ea991f4eae
+      overrides:
+        arch:
+          amd64: x86_64
+        os:
+          darwin: Darwin
+  - name: node
+    version: v18.17.1
+    type: http:archive
+    source: https://nodejs.org/dist/{{ .Version }}/node-{{ .Version }}-{{ .OS }}-{{ .Arch }}{{ .Ext }}
+    option:
+      ci: skip # Skip installing this on CI=true env.
+      stripPrefix: 'node-{{ .Version }}-{{ .OS }}-{{ .Arch }}'
+      shas:
+        darwin-arm64: sha256:18ca716ea57522b90473777cb9f878467f77fdf826d37beb15a0889fdd74533e
+        darwin-amd64: sha256:b3e083d2715f07ec3f00438401fb58faa1e0bdf3c7bde9f38b75ed17809d92fa
+        linux-arm64: sha256:88c65d4ae06f55dfd651ea647640b2ace9fbd469517ea58de8719d4e95618955
+        linux-amd64: sha256:efa39656f3a9761b5696dbd68efdff3a9be3ce00004171be53250a8a6f120272
+      overrides:
+        arch:
+          amd64: x64
