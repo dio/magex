@@ -1,1 +1,1 @@
-# `mage` extensions
+# [`mage`](https://magefile.org/) extensions
