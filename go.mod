@@ -5,6 +5,7 @@ go 1.21.0
 require (
 	github.com/charmbracelet/log v0.2.4
 	github.com/codeclysm/extract/v3 v3.1.1
+	github.com/dustin/go-humanize v1.0.1
 	github.com/magefile/mage v1.15.0
 	github.com/stretchr/testify v1.8.4
 	gopkg.in/yaml.v2 v2.4.0

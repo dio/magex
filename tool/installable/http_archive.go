@@ -15,8 +15,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/charmbracelet/log"
 	"github.com/codeclysm/extract/v3"
+	"github.com/dustin/go-humanize"
 )
 
 var httpArchiveType = "http:archive"
@@ -58,16 +58,16 @@ func (a *httpArchive) Install(ctx context.Context, dst string) (string, error) {
 		}
 		return installed, err
 	}
-	log.Infof("installing %s", a.versioned)
 
 	source, err := a.expand(a.name+":url", a.source)
 	if err != nil {
 		return installed, err
 	}
-	data, _, err := readRemoteFile(ctx, source)
+	data, _, err := readRemoteFile(ctx, source, a.versioned)
 	if err != nil {
 		return installed, err
 	}
+	fmt.Println()
 
 	if err = a.checksum(data); err != nil {
 		return installed, err
@@ -121,8 +121,9 @@ func (a *httpArchive) checksum(data []byte) error {
 	h := sha256.New()
 	_, _ = h.Write(data)
 	sum := h.Sum(nil)
-	if hex.EncodeToString(sum) != parts[1] {
-		return fmt.Errorf("failed to checksum %s: %w", a.name, ErrEntryInvalid)
+	encoded := hex.EncodeToString(sum)
+	if encoded != parts[1] {
+		return fmt.Errorf("failed to checksum %q: %s vs. %s %w", a.name, encoded, parts[1], ErrEntryInvalid)
 	}
 	return nil
 }
@@ -166,7 +167,10 @@ func infer(m map[string]string, ref, fallback string) string {
 	return fallback
 }
 
-func readRemoteFile(ctx context.Context, url string) ([]byte, http.Header, error) {
+func readRemoteFile(ctx context.Context, url, name string) ([]byte, http.Header, error) {
+	var buf bytes.Buffer
+	out := bufio.NewWriter(&buf)
+
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, nil, err
@@ -181,7 +185,7 @@ func readRemoteFile(ctx context.Context, url string) ([]byte, http.Header, error
 		return nil, resp.Header, fmt.Errorf("unexpected status code while reading %s: %v", url, resp.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
+	_, err = io.Copy(out, io.TeeReader(resp.Body, &writeCounter{name: name}))
 	if err != nil {
 		return nil, resp.Header, err
 	}
@@ -189,7 +193,7 @@ func readRemoteFile(ctx context.Context, url string) ([]byte, http.Header, error
 		_ = resp.Body.Close()
 	}()
 
-	return body, resp.Header, nil
+	return buf.Bytes(), resp.Header, nil
 }
 
 func ensureBinDir(dir string) error {
@@ -213,4 +217,26 @@ func ensureBinDir(dir string) error {
 	}
 
 	return nil
+}
+
+type writeCounter struct {
+	name  string
+	total uint64
+}
+
+func (wc *writeCounter) Write(p []byte) (int, error) {
+	n := len(p)
+	wc.total += uint64(n)
+	wc.printProgress()
+	return n, nil
+}
+
+func (wc writeCounter) printProgress() {
+	// Clear the line by using a character return to go back to the start and remove
+	// the remaining characters by filling it with spaces
+	fmt.Fprintf(os.Stderr, "\r%s", strings.Repeat(" ", 35))
+
+	// Return again and print current status of download
+	// We use the humanize package to print the bytes in a meaningful way (e.g. 10 MB)
+	fmt.Fprintf(os.Stderr, "\rDownloading %s... %s ", wc.name, humanize.Bytes(wc.total))
 }

@@ -2,8 +2,6 @@ package tool
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 func TestInstalledBaseDir(t *testing.T) {
@@ -18,6 +16,8 @@ func TestInstalledBaseDir(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		require.Equal(t, test.baseDir, installedBaseDir(test.name))
+		if test.baseDir != installedBaseDir(test.name) {
+			t.Fatalf("%s should equal %s", test.baseDir, installedBaseDir(test.name))
+		}
 	}
 }

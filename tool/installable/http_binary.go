@@ -10,8 +10,6 @@ import (
 	"path"
 	"runtime"
 	"strings"
-
-	"github.com/charmbracelet/log"
 )
 
 var httpBinaryType = "http:binary"
@@ -19,9 +17,10 @@ var httpBinaryType = "http:binary"
 type httpBinaryOption struct {
 	Overrides struct {
 		// TODO(dio): Make it typed.
-		OS   map[string]string `yaml:"os"`
-		Arch map[string]string `yaml:"arch"`
-		Ext  map[string]string `yaml:"ext"`
+		OS     map[string]string `yaml:"os"`
+		OSName map[string]string `yaml:"osName"`
+		Arch   map[string]string `yaml:"arch"`
+		Ext    map[string]string `yaml:"ext"`
 	} `yaml:"overrides"`
 
 	// TODO(dio): Have a way to set main binary and put it in a "bin" directory.
@@ -51,16 +50,16 @@ func (a *httpBinary) Install(ctx context.Context, dst string) (string, error) {
 		}
 		return installed, err
 	}
-	log.Infof("installing %s", a.versioned)
 
 	source, err := a.expand(a.name+":url", a.source)
 	if err != nil {
 		return installed, err
 	}
-	data, _, err := readRemoteFile(ctx, source)
+	data, _, err := readRemoteFile(ctx, source, a.versioned)
 	if err != nil {
 		return installed, err
 	}
+	fmt.Println()
 
 	if err := a.checksum(data); err != nil {
 		return installed, err
@@ -111,6 +110,7 @@ func (a *httpBinary) expand(name, text string) (string, error) {
 	var rendered bytes.Buffer
 	if err = u.Execute(&rendered, map[string]string{
 		"Version": a.version,
+		"OSName":  infer(a.option.Overrides.OSName, runtime.GOOS, runtime.GOOS),
 		"OS":      infer(a.option.Overrides.OS, runtime.GOOS, runtime.GOOS),
 		"Arch":    infer(a.option.Overrides.Arch, runtime.GOARCH, runtime.GOARCH),
 		"Ext":     infer(a.option.Overrides.Ext, runtime.GOOS, ".tar.gz"), // We default to .tar.gz
