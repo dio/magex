@@ -3,9 +3,9 @@ package installable
 import (
 	"context"
 	"errors"
+	"fmt"
 	"path"
 
-	"github.com/charmbracelet/log"
 	"github.com/magefile/mage/sh"
 )
 
@@ -31,7 +31,8 @@ func (a *goBinary) Install(_ context.Context, dst string) (string, error) {
 		}
 		return installed, err
 	}
-	log.Infof("installing %s", a.versioned)
+	fmt.Printf("installing %s", a.versioned)
+	fmt.Println()
 
 	env := map[string]string{
 		"GOBIN": installed,

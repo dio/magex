@@ -3,9 +3,9 @@ package installable
 import (
 	"context"
 	"errors"
+	"fmt"
 	"path"
 
-	"github.com/charmbracelet/log"
 	"github.com/magefile/mage/sh"
 )
 
@@ -34,7 +34,8 @@ func (a *npmBinary) Install(_ context.Context, dst string) (string, error) {
 		}
 		return installed, err
 	}
-	log.Infof("installing %s", a.versioned)
+	fmt.Printf("installing %s", a.versioned)
+	fmt.Println()
 
 	return installed,
 		sh.RunV("npm", "install", "--prefix", path.Join(dst, a.versioned), a.source+"@"+a.version)
