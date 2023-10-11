@@ -34,7 +34,7 @@ func (a *npmBinary) Install(_ context.Context, dst string) (string, error) {
 		}
 		return installed, err
 	}
-	fmt.Printf("installing %s", a.versioned)
+	fmt.Printf("Installing %s", a.versioned)
 	fmt.Println()
 
 	return installed,
