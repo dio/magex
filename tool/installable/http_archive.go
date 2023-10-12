@@ -19,6 +19,7 @@ import (
 	"github.com/dustin/go-humanize"
 )
 
+var runningOnCI = os.Getenv("CI") != ""
 var httpArchiveType = "http:archive"
 
 type httpArchiveOption struct {
@@ -232,6 +233,9 @@ func (wc *writeCounter) Write(p []byte) (int, error) {
 }
 
 func (wc writeCounter) printProgress() {
+	if runningOnCI {
+		return
+	}
 	// Clear the line by using a character return to go back to the start and remove
 	// the remaining characters by filling it with spaces
 	fmt.Fprintf(os.Stderr, "\r%s", strings.Repeat(" ", 35))
