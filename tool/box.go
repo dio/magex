@@ -26,6 +26,15 @@ func LoadDefault() (*Box, error) {
 	return Load("magetools")
 }
 
+// LoadFromFile loads installable from file.
+func LoadFromFile(dir, file string) (*Box, error) {
+	data, err := os.ReadFile(file)
+	if err != nil {
+		return nil, err
+	}
+	return LoadFromData(dir, data)
+}
+
 // LoadFromData loads installable from data.
 func LoadFromData(dir string, data []byte) (*Box, error) {
 	installables, err := installable.Load(data)
