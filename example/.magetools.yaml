@@ -108,3 +108,22 @@ tools:
       overrides:
         arch:
           amd64: x64
+  - name: buf
+    version: v1.29.0
+    type: http:archive
+    source: https://github.com/bufbuild/buf/releases/download/{{ .Version }}/buf-{{ .OSArch }}{{ .Ext }}
+    option:
+      stripPrefix: "buf-{{ .OS }}-{{ .Arch }}"
+      shas:
+        darwin-arm64: sha256:b97225a3b3f18bdabb36e83d9aba2e6419ead0c6ca0894d10a95517be5fd302f
+        darwin-amd64: sha256:7ec6c2fd8f7e5e2ddba1e9ebff51eb9b0d6b67b85e105138dd064057c7b32db8
+        linux-arm64: sha256:79ef06935fb47e432c0c91bdefd140e5b543ec46376007ca14a52e5ed3023088
+        linux-amd64: sha256:1033f26361e6fc30ffcfab9d4e4274ffd4af88d9c97de63d2e1721c4a07c1380
+      overrides:
+        arch:
+          amd64: x86_64
+        osArch:
+          darwin-arm64: Darwin-arm64
+          darwin-amd64: Darwin-amd64
+          linux-arm64: Linux-aarch64
+          linux-amd64: Linux-amd64

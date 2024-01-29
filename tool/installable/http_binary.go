@@ -18,7 +18,7 @@ type httpBinaryOption struct {
 	Overrides struct {
 		// TODO(dio): Make it typed.
 		OS     map[string]string `yaml:"os"`
-		OSName map[string]string `yaml:"osName"`
+		OSArch map[string]string `yaml:"osArch"`
 		Arch   map[string]string `yaml:"arch"`
 		Ext    map[string]string `yaml:"ext"`
 	} `yaml:"overrides"`
@@ -110,9 +110,9 @@ func (a *httpBinary) expand(name, text string) (string, error) {
 	var rendered bytes.Buffer
 	if err = u.Execute(&rendered, map[string]string{
 		"Version": a.version,
-		"OSName":  infer(a.option.Overrides.OSName, runtime.GOOS, runtime.GOOS),
 		"OS":      infer(a.option.Overrides.OS, runtime.GOOS, runtime.GOOS),
 		"Arch":    infer(a.option.Overrides.Arch, runtime.GOARCH, runtime.GOARCH),
+		"OSArch":  infer(a.option.Overrides.OSArch, runtime.GOOS+"-"+runtime.GOARCH, runtime.GOOS+"-"+runtime.GOARCH),
 		"Ext":     infer(a.option.Overrides.Ext, runtime.GOOS, ".tar.gz"), // We default to .tar.gz
 	}); err != nil {
 		return "", err

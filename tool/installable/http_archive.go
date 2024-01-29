@@ -27,9 +27,10 @@ type httpArchiveOption struct {
 
 	Overrides struct {
 		// TODO(dio): Make it typed.
-		OS   map[string]string `yaml:"os"`
-		Arch map[string]string `yaml:"arch"`
-		Ext  map[string]string `yaml:"ext"`
+		OS     map[string]string `yaml:"os"`
+		Arch   map[string]string `yaml:"arch"`
+		Ext    map[string]string `yaml:"ext"`
+		OSArch map[string]string `yaml:"osArch"`
 	} `yaml:"overrides"`
 
 	// TODO(dio): Have a way to set main binary and put it in a "bin" directory.
@@ -152,6 +153,7 @@ func (a *httpArchive) expand(name, text string) (string, error) {
 		"Version": a.version,
 		"OS":      infer(a.option.Overrides.OS, runtime.GOOS, runtime.GOOS),
 		"Arch":    infer(a.option.Overrides.Arch, runtime.GOARCH, runtime.GOARCH),
+		"OSArch":  infer(a.option.Overrides.OSArch, runtime.GOOS+"-"+runtime.GOARCH, runtime.GOOS+"-"+runtime.GOARCH),
 		"Ext":     infer(a.option.Overrides.Ext, runtime.GOOS, ".tar.gz"), // We default to .tar.gz
 	}); err != nil {
 		return "", err

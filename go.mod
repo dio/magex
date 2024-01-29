@@ -7,7 +7,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/magefile/mage v1.15.0
 	github.com/stretchr/testify v1.8.4
-	gopkg.in/yaml.v2 v2.4.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -20,5 +20,5 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/ulikunitz/xz v0.5.11 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
