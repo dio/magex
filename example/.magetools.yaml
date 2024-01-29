@@ -113,7 +113,7 @@ tools:
     type: http:archive
     source: https://github.com/bufbuild/buf/releases/download/{{ .Version }}/buf-{{ .OSArch }}{{ .Ext }}
     option:
-      stripPrefix: "buf-{{ .OS }}-{{ .Arch }}"
+      stripPrefix: "buf"
       shas:
         darwin-arm64: sha256:b97225a3b3f18bdabb36e83d9aba2e6419ead0c6ca0894d10a95517be5fd302f
         darwin-amd64: sha256:7ec6c2fd8f7e5e2ddba1e9ebff51eb9b0d6b67b85e105138dd064057c7b32db8
